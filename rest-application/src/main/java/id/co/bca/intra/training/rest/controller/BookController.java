@@ -39,7 +39,7 @@ public class BookController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     private Book insertNewBook(@RequestBody InsertBookRequestDTO request) {
         if (request.getPublishYear() < 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Publish year should contain positive integer");

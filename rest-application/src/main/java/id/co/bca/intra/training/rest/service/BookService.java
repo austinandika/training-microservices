@@ -20,6 +20,16 @@ public class BookService {
         return bookRepository.findById(id).orElse(null);
     }
 
+    public Book saveIfNotExists(Book book) {
+        boolean isExists = getById(book.getId()) != null;
+
+        if (isExists) {
+            return null;
+        }
+
+        return bookRepository.save(book);
+    }
+
     public Book save(Book book) {
         return bookRepository.save(book);
     }

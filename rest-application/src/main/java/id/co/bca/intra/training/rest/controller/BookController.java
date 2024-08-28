@@ -19,8 +19,6 @@ public class BookController {
     @Autowired
     BookService bookService;
 
-    private Logger logger = LoggerFactory.getLogger(BookController.class);
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     private List<Book> getAllBooks() {
@@ -31,10 +29,10 @@ public class BookController {
     @ResponseStatus(HttpStatus.OK)
     private Book getBookById(@PathVariable Long id) {
         Book book = bookService.getById(id);
-
         if (book == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with id: " + id + " not found");
         }
+
         return book;
     }
 
@@ -47,13 +45,21 @@ public class BookController {
 
         Book book = new Book(request.getId(), request.getTitle(), request.getAuthor(), request.getPublishYear());
 
-        return bookService.save(book);
+        Book result = bookService.saveIfNotExists(book);
+        if (result == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Book with id: " + book.getId() + " already exists");
+        }
+
+        return result;
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     private Book updateBook(@RequestBody UpdateBookRequestDTO request) {
         Book book = bookService.getById(request.getId());
+        if (book == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with id: " + request.getId() + " not found");
+        }
 
         if (request.getTitle() != null) {
             book.setTitle(request.getTitle());
@@ -74,6 +80,10 @@ public class BookController {
     @ResponseStatus(HttpStatus.OK)
     private void deleteBookById(@PathVariable Long id) {
         Book book = bookService.getById(id);
+        if (book == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with id: " + id + " not found");
+        }
+
         bookService.remove(book);
     }
 }

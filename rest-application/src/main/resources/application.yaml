@@ -1,0 +1,13 @@
+logging.level.id.co.bca.intra: DEBUG
+
+server:
+  address: 127.0.0.1
+  port: 9200
+  error:
+    include-message: always
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres

@@ -8,7 +8,7 @@
 		<version>3.3.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>id.co.bca.intra</groupId>
+	<groupId>id.co.bca.intra.training.microservices</groupId>
 	<artifactId>training-microservices</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -23,6 +23,8 @@
 	</developers>
 	<modules>
 		<module>eureka-server</module>
+		<module>eureka-client</module>
+		<module>rest-application</module>
 	</modules>
 	<scm>
 		<connection/>

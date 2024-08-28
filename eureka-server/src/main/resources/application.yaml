@@ -1,0 +1,12 @@
+logging.level.id.co.bca.intra: DEBUG
+
+server:
+  address: 127.0.0.1
+  port: 8900
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+  server:
+    enableSelfPreservation: false

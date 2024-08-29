@@ -9,6 +9,7 @@ import id.co.bca.intra.training.rest.service.UserService;
 import id.co.bca.intra.training.rest.utilities.EncoderUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,38 +34,35 @@ public class UserController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/api/auth/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public User insertUser(@RequestBody InsertUserRequestDTO request) {
+    public ResponseEntity<User> insertUser(@RequestBody InsertUserRequestDTO request) {
         boolean userExists = userService.getUserByIdOrUsername(request.getId(), request.getUsername()) != null;
 
         if (userExists) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with the same id or username already exists");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         // encode password
         String encodedPassword = encoderUtilities.encoder().encode(request.getPassword());
 
         User user = new User(request.getId(), request.getUsername(), encodedPassword);
-        return userService.save(user);
+        return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED) ;
     }
 
     @PostMapping("/api/auth/login")
-    @ResponseStatus(HttpStatus.CREATED)
-    public LoginUserResponseDTO loginUser(@RequestBody LoginUserRequestDTO request) {
+    public ResponseEntity<LoginUserResponseDTO> loginUser(@RequestBody LoginUserRequestDTO request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
         if (authentication.isAuthenticated()) {
-            return new LoginUserResponseDTO(jwtService.generateToken(request.getUsername()));
+            return new ResponseEntity<>(new LoginUserResponseDTO(jwtService.generateToken(request.getUsername())), HttpStatus.OK);
         }
 
-        throw new UsernameNotFoundException("Invalid user request!");
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @GetMapping("/api/users")
-    @ResponseStatus(HttpStatus.OK)
-    public List<User> getUsers() {
-        return userService.getUsers();
+    public ResponseEntity<List<User>> getUsers() {
+        return new ResponseEntity<>(userService.getUsers(), HttpStatus.OK);
     }
 }

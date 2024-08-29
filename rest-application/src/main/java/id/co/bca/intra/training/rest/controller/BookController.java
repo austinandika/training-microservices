@@ -6,6 +6,7 @@ import id.co.bca.intra.training.rest.entity.Book;
 import id.co.bca.intra.training.rest.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,45 +19,41 @@ public class BookController {
     BookService bookService;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    private List<Book> getAllBooks() {
-        return bookService.getAll();
+    private ResponseEntity<List<Book>> getAllBooks() {
+        return new ResponseEntity<>(bookService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    private Book getBookById(@PathVariable Long id) {
+    private ResponseEntity<Book> getBookById(@PathVariable Long id) {
         Book book = bookService.getById(id);
         if (book == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with id: " + id + " not found");
         }
 
-        return book;
+        return new ResponseEntity<>(book, HttpStatus.OK);
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    private Book insertNewBook(@RequestBody InsertBookRequestDTO request) {
+    private ResponseEntity<Book> insertNewBook(@RequestBody InsertBookRequestDTO request) {
         if (request.getPublishYear() < 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Publish year should contain positive integer");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         Book book = new Book(request.getId(), request.getTitle(), request.getAuthor(), request.getPublishYear());
 
         Book result = bookService.saveIfNotExists(book);
         if (result == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Book with id: " + book.getId() + " already exists");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        return result;
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @PutMapping
-    @ResponseStatus(HttpStatus.OK)
-    private Book updateBook(@RequestBody UpdateBookRequestDTO request) {
+    private ResponseEntity<Book> updateBook(@RequestBody UpdateBookRequestDTO request) {
         Book book = bookService.getById(request.getId());
         if (book == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with id: " + request.getId() + " not found");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         if (request.getTitle() != null) {
@@ -71,17 +68,18 @@ public class BookController {
             book.setPublishYear(request.getPublishYear());
         }
 
-        return bookService.save(book);
+        return new ResponseEntity<>(bookService.save(book), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    private void deleteBookById(@PathVariable Long id) {
+    private ResponseEntity deleteBookById(@PathVariable Long id) {
         Book book = bookService.getById(id);
         if (book == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book with id: " + id + " not found");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         bookService.remove(book);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

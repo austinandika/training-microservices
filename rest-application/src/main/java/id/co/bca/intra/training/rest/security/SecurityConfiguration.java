@@ -37,7 +37,7 @@ public class SecurityConfiguration {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/register", "/api/auth/login", "/actuator/**").permitAll()
                         .anyRequest().authenticated() // Protect all other endpoints
                 )
                 .authenticationProvider(authenticationProvider())

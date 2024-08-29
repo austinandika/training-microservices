@@ -35,17 +35,17 @@ public class UserController {
     @PostMapping("/api/auth/register")
     @ResponseStatus(HttpStatus.CREATED)
     public User insertUser(@RequestBody InsertUserRequestDTO request) {
-        User duplicateUser = userService.getUserById(request.getId());
+        boolean userExists = userService.getUserByIdOrUsername(request.getId(), request.getUsername()) != null;
 
-        if (duplicateUser == null || !duplicateUser.getUsername().equals(request.getUsername())) {
-            // encode password
-            String encodedPassword = encoderUtilities.encoder().encode(request.getPassword());
-
-            User user = new User(request.getId(), request.getUsername(), encodedPassword);
-            return userService.save(user);
+        if (userExists) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with the same id or username already exists");
         }
 
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with the same id or username already exists");
+        // encode password
+        String encodedPassword = encoderUtilities.encoder().encode(request.getPassword());
+
+        User user = new User(request.getId(), request.getUsername(), encodedPassword);
+        return userService.save(user);
     }
 
     @PostMapping("/api/auth/login")

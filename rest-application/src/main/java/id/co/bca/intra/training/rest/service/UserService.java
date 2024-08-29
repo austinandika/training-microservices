@@ -20,8 +20,16 @@ public class UserService implements UserDetailsService {
         return userRepository.existsById(id);
     }
 
+    public User getUserByIdOrUsername(Long id, String username) {
+        return userRepository.findByIdOrUsername(id, username);
+    }
+
     public User getUserById(Long id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     public List<User> getUsers() {
@@ -34,7 +42,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        User user = getUserByUsername(username);
         return new UserInfoDetails(user);
     }
 }

@@ -1,6 +1,12 @@
 logging.level.id.co.bca.intra: DEBUG
 
 server:
+  ssl:
+    enabled: true
+    key-store-type: JKS
+    key-store: "classpath:keystore/keystore-test.jks"
+    key-store-password: austin2001
+    key-alias: test-microservices
   address: 127.0.0.1
   port: 9200
   error:

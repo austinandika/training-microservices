@@ -1,7 +1,7 @@
 package id.co.bca.intra.training.rest.service;
 
 import id.co.bca.intra.training.rest.entity.User;
-import id.co.bca.intra.training.rest.entity.UserInfoDetails;
+import id.co.bca.intra.training.rest.security.UserInfoDetails;
 import id.co.bca.intra.training.rest.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

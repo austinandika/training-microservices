@@ -1,5 +1,6 @@
-package id.co.bca.intra.training.rest.entity;
+package id.co.bca.intra.training.rest.security;
 
+import id.co.bca.intra.training.rest.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

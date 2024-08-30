@@ -1,0 +1,15 @@
+services:
+  app:
+     image: rest-application-test:latest
+     ports:
+       - "9200:9200"
+     environment:
+       JAVA_OPTS: >-
+         -Dspring.datasource.url=jdbc:postgresql://db:5433/postgres
+     container_name: rest-application-test
+     networks:
+       - app-network
+
+networks:
+  app-network:
+    external: true
